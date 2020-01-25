@@ -39,13 +39,16 @@ namespace Producer
 
         private IJSONDataGenerator MakeGenerator(Field field)
         {
-            return typeToFacMap[field.typeID].Make(field.param);
+            return typeToFacMap[field.typeID].Make(field);
         }
 
-        public JArray MakeRecord()
+        public JObject MakeRecord()
         {
-            JArray record = new JArray();
-            generators.ForEach(generator => record.Add(generator.GenerateJsonData()));
+            //JArray record = new JArray();
+            //generators.ForEach(generator => record.Add(generator.GenerateJsonData()));
+
+            JObject record = new JObject();
+            generators.ForEach(generator => record[generator.GetFieldName()] = generator.GenerateJsonData();
             return record;
         }
 

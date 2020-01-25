@@ -28,7 +28,7 @@ namespace Producer
             Console.WriteLine("Generated Data Records: ");
             for (int counter = parsed_config.records_count; counter > 0; counter--)
             {
-                JArray record = recordMaker.MakeRecord();
+                JObject record = recordMaker.MakeRecord();
                 Console.WriteLine(record.ToString());
             };
 

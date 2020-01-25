@@ -7,23 +7,23 @@ namespace Producer
 
     public interface IJSONDataGeneratorFactory
     {
-        IJSONDataGenerator Make(FieldParam param);
+        IJSONDataGenerator Make(Field field);
     }
 
     public class DoubleJSONDataGeneratorFactory : IJSONDataGeneratorFactory
     {
-        public IJSONDataGenerator Make(FieldParam param)
+        public IJSONDataGenerator Make(Field field)
         {
-            return new DoubleDataGenerator(param.mean, param.standard_deviation);
+            return new DoubleDataGenerator(field.name, field.param.mean, field.param.standard_deviation);
 
         }
     }
 
     public class IntegerJSONDataGeneratorFactory : IJSONDataGeneratorFactory
     {
-        public IJSONDataGenerator Make(FieldParam param)
+        public IJSONDataGenerator Make(Field field)
         {
-            return new IntegerDataGenerator(param.mean, param.standard_deviation);
+            return new IntegerDataGenerator(field.name, field.param.mean, field.param.standard_deviation);
 
         }
     }
@@ -31,9 +31,9 @@ namespace Producer
 
     public class StringJSONDataGeneratorFactory : IJSONDataGeneratorFactory
     {
-        public IJSONDataGenerator Make(FieldParam param)
+        public IJSONDataGenerator Make(Field field)
         {
-            return new StringDataGenerator(param.max_len);
+            return new StringDataGenerator(field.name, field.param.max_len);
 
         }
     }
@@ -42,6 +42,7 @@ namespace Producer
     public interface IJSONDataGenerator
     {
         JValue GenerateJsonData();
+        string GetFieldName();
 
     }
 
@@ -60,10 +61,11 @@ namespace Producer
         private static readonly double DEFAULT_MEAN = 0.0;
         private static readonly double DEFAULT_STANDARD_DEVIATION = 20.0;
 
-        public DoubleDataGenerator(double? mean, double? standardDeviation) : this(mean.GetValueOrDefault(DEFAULT_MEAN), standardDeviation.GetValueOrDefault(DEFAULT_STANDARD_DEVIATION)) { }
+        public DoubleDataGenerator(string name, double? mean, double? standardDeviation) : this(name, mean.GetValueOrDefault(DEFAULT_MEAN), standardDeviation.GetValueOrDefault(DEFAULT_STANDARD_DEVIATION)) { }
 
-        public DoubleDataGenerator(double mean, double standardDeviation)
+        public DoubleDataGenerator(string name, double mean, double standardDeviation)
         {
+            this.Name = name;
             this.Mean = mean;
             this.StandardDeviation = standardDeviation;
         }
@@ -71,6 +73,8 @@ namespace Producer
         public double Mean { get; private set; }
 
         public double StandardDeviation { get; private set; }
+
+        public string Name { get; private set; }
 
         public double Generate()
         {
@@ -83,6 +87,11 @@ namespace Producer
             double data = this.Generate();
             return new JValue(data);
         }
+
+        public string GetFieldName()
+        {
+            return Name;
+        }
     }
 
 
@@ -91,13 +100,16 @@ namespace Producer
         private static readonly double DEFAULT_MEAN = 10.0;
         private static readonly double DEFAULT_STANDARD_DEVIATION = 10.0;
 
-        public IntegerDataGenerator(double? mean, double? standardDeviation) : this(mean.GetValueOrDefault(DEFAULT_MEAN), standardDeviation.GetValueOrDefault(DEFAULT_STANDARD_DEVIATION)) { }
+        public IntegerDataGenerator(string name, double? mean, double? standardDeviation) : this(name, mean.GetValueOrDefault(DEFAULT_MEAN), standardDeviation.GetValueOrDefault(DEFAULT_STANDARD_DEVIATION)) { }
 
-        public IntegerDataGenerator(double mean, double standardDeviation)
+        public IntegerDataGenerator(string name, double mean, double standardDeviation)
         {
+            this.Name = name; 
             this.Mean = mean;
             this.StandardDeviation = standardDeviation;
         }
+
+        public string Name { get; private set; }
 
         public double Mean { get; private set; }
 
@@ -114,19 +126,24 @@ namespace Producer
             int data = this.Generate();
             return new JValue(data);
         }
+
+        public string GetFieldName()
+        {
+            return Name;
+        }
     }
 
     public class StringDataGenerator : IDataGenerator<string>
     {
         private static readonly int DEFAULT_MAXLEN = 10;
 
-        public StringDataGenerator(int? maxlen) : this(maxlen.GetValueOrDefault(DEFAULT_MAXLEN)) { }
+        public StringDataGenerator(string name, int? maxlen) : this(name, maxlen.GetValueOrDefault(DEFAULT_MAXLEN)) { }
 
-        public StringDataGenerator(int maxlen)
+        public StringDataGenerator(string name, int maxlen)
         {
             this.MaxLen = maxlen;
         }
-
+        public string Name { get; private set; }
         public double MaxLen { get; private set; }
 
         public string Generate()
@@ -139,6 +156,11 @@ namespace Producer
         {
             string data = this.Generate();
             return new JValue(data);
+        }
+
+        public string GetFieldName()
+        {
+            return Name;
         }
     }
 
