@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -18,21 +19,39 @@ namespace Producer
             // Start parsing
             string? filePath = Console.ReadLine();
             FullConfig parsed_config = ParseConfig(filePath);
-            RecordMaker recordMaker = new RecordMaker(parsed_config.fields);
+            RecordMaker recordMaker = new RecordMaker(parsed_config.fields, new DefaultAdpt());
 
 
             // TODO: Connect with consumer and confirm
 
 
             // Make record
+            //Console.WriteLine("Generated Data Records: ");
+            //for (int counter = parsed_config.records_count; counter > 0; counter--)
+            //{
+            //    JObject record = recordMaker.MakeRecord();
+            //    Console.WriteLine(record.ToString());
+            //};
+
+            // TODO: Send records
+
+            // Make record and Send Records
             Console.WriteLine("Generated Data Records: ");
             for (int counter = parsed_config.records_count; counter > 0; counter--)
             {
-                JObject record = recordMaker.MakeRecord();
-                Console.WriteLine(record.ToString());
-            };
+                // JObject record = recordMaker.MakeRecord();
+                try
+                {
+                    recordMaker.SendRecord();
+                    // Console.WriteLine(record.ToString());
+                }
+                catch (WebException webExcp)
+                {
 
-            // TODO: Send records
+                }
+
+
+            };
 
 
 
