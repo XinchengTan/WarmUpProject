@@ -141,6 +141,7 @@ namespace Producer
 
         public StringDataGenerator(string name, int maxlen)
         {
+            this.Name = name;
             this.MaxLen = maxlen;
         }
         public string Name { get; private set; }

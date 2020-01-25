@@ -48,7 +48,7 @@ namespace Producer
             //generators.ForEach(generator => record.Add(generator.GenerateJsonData()));
 
             JObject record = new JObject();
-            generators.ForEach(generator => record[generator.GetFieldName()] = generator.GenerateJsonData();
+            generators.ForEach(generator => record[generator.GetFieldName()] = generator.GenerateJsonData());
             return record;
         }
 
