@@ -8,13 +8,13 @@ namespace Producer
     public class ConfigToFieldsTranslator
     {
 
-        private readonly Dictionary<string, Func<JObject, Field>> translator = new Dictionary<string, Func<JObject, Field>>();
-        private void AddCase(string typeID, Func<JObject, Field> translatorCase)
+        private readonly Dictionary<string, Func<JObject, FieldAttributes>> translator = new Dictionary<string, Func<JObject, FieldAttributes>>();
+        private void AddCase(string typeID, Func<JObject, FieldAttributes> translatorCase)
         {
             translator.Add(typeID, translatorCase);
         }
 
-        private Field CaseAt(string typeID, JObject value)
+        private FieldAttributes CaseAt(string typeID, JObject value)
         {
             return translator[typeID].Invoke(value);
         }
@@ -30,7 +30,7 @@ namespace Producer
                     mean = mean,
                     standard_deviation = std
                 };
-                return new Field(name, "double", param);
+                return new FieldAttributes(name, "double", param);
             });
 
             this.AddCase("int", jObject => {
@@ -42,7 +42,7 @@ namespace Producer
                     mean = mean,
                     standard_deviation = std
                 };
-                return new Field(name, "int", param);
+                return new FieldAttributes(name, "int", param);
             });
 
             this.AddCase("string", jObject => {
@@ -52,14 +52,14 @@ namespace Producer
                 {
                     max_len = maxlen
                 };
-                return new Field(name, "string", param);
+                return new FieldAttributes(name, "string", param);
             });
         }
 
         // Takes in the whole config JSON file as a JObject and returns a list of Fields
         public FullConfig Translate(JObject config)
         {
-            List<Field> fields = new List<Field>();
+            List<FieldAttributes> fields = new List<FieldAttributes>();
             foreach(JObject fieldConfig in (JArray) config["dimension_attributes"])
             {
                 string typeID = (string)fieldConfig["type"];

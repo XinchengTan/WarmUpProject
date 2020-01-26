@@ -19,39 +19,24 @@ namespace Producer
             // Start parsing
             string? filePath = Console.ReadLine();
             FullConfig parsed_config = ParseConfig(filePath);
-            RecordMaker recordMaker = new RecordMaker(parsed_config.fields, new DefaultAdpt());
+            Producer producer = new Producer(parsed_config.records_count, parsed_config.fields);
 
 
             // TODO: Connect with consumer and confirm
 
 
-            // Make record
-            //Console.WriteLine("Generated Data Records: ");
-            //for (int counter = parsed_config.records_count; counter > 0; counter--)
-            //{
-            //    JObject record = recordMaker.MakeRecord();
-            //    Console.WriteLine(record.ToString());
-            //};
 
-            // TODO: Send records
-
-            // Make record and Send Records
+            // Make and send Records
             Console.WriteLine("Generated Data Records: ");
-            for (int counter = parsed_config.records_count; counter > 0; counter--)
+            try
             {
-                // JObject record = recordMaker.MakeRecord();
-                try
-                {
-                    recordMaker.SendRecord();
-                    // Console.WriteLine(record.ToString());
-                }
-                catch (WebException webExcp)
-                {
+                producer.SendAllRecords(new ProducerToDefaultConsumerAddpt());
+                // Console.WriteLine(record.ToString());
+            }
+            catch (WebException webExcp)
+            {
 
-                }
-
-
-            };
+            }
 
 
 

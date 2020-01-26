@@ -12,7 +12,7 @@ namespace Producer
 
     }
 
-    public class DefaultAdpt : IProducerToConsumerAdpt
+    public class ProducerToDefaultConsumerAddpt : IProducerToConsumerAdpt
     {
         public int receivedResNum = 0;
 

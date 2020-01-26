@@ -9,12 +9,12 @@ namespace Producer
 
     public interface IFieldDataGeneratorFactory
     {
-        IFieldDataGenerator Make(Field field);
+        IFieldDataGenerator Make(FieldAttributes field);
     }
 
     public class DoubleDataGeneratorFactory : IFieldDataGeneratorFactory
     {
-        public IFieldDataGenerator Make(Field field)
+        public IFieldDataGenerator Make(FieldAttributes field)
         {
             return new DoubleDataGenerator(field.name, field.param.mean, field.param.standard_deviation);
 
@@ -23,7 +23,7 @@ namespace Producer
 
     public class IntegerDataGeneratorFactory : IFieldDataGeneratorFactory
     {
-        public IFieldDataGenerator Make(Field field)
+        public IFieldDataGenerator Make(FieldAttributes field)
         {
             return new IntegerDataGenerator(field.name, field.param.mean, field.param.standard_deviation);
 
@@ -33,7 +33,7 @@ namespace Producer
 
     public class StringDataGeneratorFactory : IFieldDataGeneratorFactory
     {
-        public IFieldDataGenerator Make(Field field)
+        public IFieldDataGenerator Make(FieldAttributes field)
         {
             return new StringDataGenerator(field.name, field.param.max_len);
 
