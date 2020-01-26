@@ -7,23 +7,23 @@ namespace Producer
 
 {
 
-    public interface IJSONDataGeneratorFactory
+    public interface IFieldDataGeneratorFactory
     {
-        IJSONDataGenerator Make(Field field);
+        IFieldDataGenerator Make(Field field);
     }
 
-    public class DoubleJSONDataGeneratorFactory : IJSONDataGeneratorFactory
+    public class DoubleDataGeneratorFactory : IFieldDataGeneratorFactory
     {
-        public IJSONDataGenerator Make(Field field)
+        public IFieldDataGenerator Make(Field field)
         {
             return new DoubleDataGenerator(field.name, field.param.mean, field.param.standard_deviation);
 
         }
     }
 
-    public class IntegerJSONDataGeneratorFactory : IJSONDataGeneratorFactory
+    public class IntegerDataGeneratorFactory : IFieldDataGeneratorFactory
     {
-        public IJSONDataGenerator Make(Field field)
+        public IFieldDataGenerator Make(Field field)
         {
             return new IntegerDataGenerator(field.name, field.param.mean, field.param.standard_deviation);
 
@@ -31,9 +31,9 @@ namespace Producer
     }
 
 
-    public class StringJSONDataGeneratorFactory : IJSONDataGeneratorFactory
+    public class StringDataGeneratorFactory : IFieldDataGeneratorFactory
     {
-        public IJSONDataGenerator Make(Field field)
+        public IFieldDataGenerator Make(Field field)
         {
             return new StringDataGenerator(field.name, field.param.max_len);
 
@@ -41,20 +41,20 @@ namespace Producer
     }
 
 
-    public interface IJSONDataGenerator
+    public interface IFieldDataGenerator
     {
-        JValue GenerateJsonData();
+        JValue GenerateFieldData();
         string GetFieldName();
 
     }
 
 
-    public interface IDataGenerator<T> : IJSONDataGenerator
+    public interface IDataGenerator<T> : IFieldDataGenerator
     {
 
         T Generate();
 
-        new JValue GenerateJsonData();
+        new JValue GenerateFieldData();
     }
 
 
@@ -84,7 +84,7 @@ namespace Producer
             return data[0];
         }
 
-        public JValue GenerateJsonData()
+        public JValue GenerateFieldData()
         {
             double data = this.Generate();
             return new JValue(data);
@@ -123,7 +123,7 @@ namespace Producer
             return (int)data[0];
         }
 
-        public JValue GenerateJsonData()
+        public JValue GenerateFieldData()
         {
             int data = this.Generate();
             return new JValue(data);
@@ -164,7 +164,7 @@ namespace Producer
             return builder.ToString();
         }
 
-        public JValue GenerateJsonData()
+        public JValue GenerateFieldData()
         {
             string data = this.Generate();
             return new JValue(data);
@@ -175,74 +175,6 @@ namespace Producer
             return Name;
         }
     }
-
-    //public abstract class AErrorGenerator<T, U> : IDataGenerator<U> where T: struct
-    //{
-    //    private static readonly double DEFAULT_ERROR_RATE = 0.05;
-
-    //    public double ErrorRate { get; private set; }
-
-    //    public IDataGenerator<T> DataGenerator { get; private set; }
-
-    //    protected AErrorGenerator(double errorRate, IDataGenerator<T> dataGenerator)
-    //    {
-    //        this.ErrorRate = errorRate;
-    //        this.DataGenerator = dataGenerator;
-    //    }
-
-    //    protected AErrorGenerator(IDataGenerator<T> dataGenerator) : this(DEFAULT_ERROR_RATE, dataGenerator) { }
-
-    //    public abstract U Generate();
-
-    //    public abstract JValue GenerateJsonData();
-    //}
-
-    //public class NullErrorGenerator<T> : AErrorGenerator<T, T?> where T : struct
-    //{
-    //    public NullErrorGenerator(double errorRate, IDataGenerator<T> dataGenerator) : base(errorRate, dataGenerator) { }
-
-    //    public NullErrorGenerator(IDataGenerator<T> dataGenerator) : base(dataGenerator) { }
-
-    //    public override T? Generate()
-    //    {
-    //        // List<T?> data = this.DataGenerator.Generate(amount);
-
-    //        // Object is not nullable so we have to change something in the definition of this method
-    //        // It's supposed to be List<Object?> but it's not compiling I haven't figured out why yet
-    //        // data[0] = null;
-
-
-    //        return null;
-
-    //    }
-
-    //    public override JValue GenerateJsonData()
-    //    {
-    //        return new JValue();
-    //    }
-    //}
-
-    //public abstract class AWrongTypeGenerator<T, U>: AErrorGenerator<T, U>
-    //{
-    //    public WrongTypeGenerator(double errorRate, IDataGenerator<T> dataGenerator): base(errorRate, dataGenerator) { }
-
-    //    public WrongTypeGenerator(IDataGenerator<T> dataGenerator) : base(dataGenerator) { }
-
-    //    public override List<U> Generate(int amount)
-    //    {
-    //        List<T> data = this.DataGenerator.Generate(amount);
-    //        List<Object> finalData = new List<object>();
-    //        foreach(T x in data)
-    //        {
-    //            finalData.Add((object)x);
-    //        }
-    //        finalData[0] = (object)"wrong data!";
-    //        return finalData;
-    //    }
-    //}
-
-
-
 
 
 

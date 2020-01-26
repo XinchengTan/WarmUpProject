@@ -8,12 +8,12 @@ namespace Producer
     public class RecordMaker
     {
         private IProducerToConsumerAdpt adapter = new DefaultAdpt();
-        private List<IJSONDataGenerator> generators;
-        private static readonly Dictionary<string, IJSONDataGeneratorFactory> typeToFacMap = new Dictionary<string, IJSONDataGeneratorFactory>
+        private List<IFieldDataGenerator> generators;
+        private static readonly Dictionary<string, IFieldDataGeneratorFactory> typeToFacMap = new Dictionary<string, IFieldDataGeneratorFactory>
         {
-            {"double", new DoubleJSONDataGeneratorFactory() },
-            {"int", new IntegerJSONDataGeneratorFactory() },
-            {"string", new StringJSONDataGeneratorFactory() }
+            {"double", new DoubleDataGeneratorFactory() },
+            {"int", new IntegerDataGeneratorFactory() },
+            {"string", new StringDataGeneratorFactory() }
         };
 
         public RecordMaker(List<Field> fields, IProducerToConsumerAdpt adpt)
@@ -30,14 +30,14 @@ namespace Producer
         }
 
 
-        private List<IJSONDataGenerator> MakeGenerators(List<Field> fields)
+        private List<IFieldDataGenerator> MakeGenerators(List<Field> fields)
         {
-            List<IJSONDataGenerator> generators = new List<IJSONDataGenerator>();
+            List<IFieldDataGenerator> generators = new List<IFieldDataGenerator>();
             fields.ForEach(field => generators.Add(this.MakeGenerator(field)));
             return generators;
         }
 
-        private IJSONDataGenerator MakeGenerator(Field field)
+        private IFieldDataGenerator MakeGenerator(Field field)
         {
             return typeToFacMap[field.typeID].Make(field);
         }
@@ -48,7 +48,7 @@ namespace Producer
             //generators.ForEach(generator => record.Add(generator.GenerateJsonData()));
 
             JObject record = new JObject();
-            generators.ForEach(generator => record[generator.GetFieldName()] = generator.GenerateJsonData());
+            generators.ForEach(generator => record[generator.GetFieldName()] = generator.GenerateFieldData());
             return record;
         }
 
