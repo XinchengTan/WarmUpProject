@@ -25,13 +25,23 @@ namespace Producer
         }
     }
 
-    // This is a visitor
+    public class FieldDataGeneratorFactory: AVisitor<FieldAttributes, IFieldDataGenerator>
+    {
+        public FieldDataGeneratorFactory()
+        {
+            this.AddCase(Type.Double, field => new DoubleDataGenerator(field.name, field.param.mean, field.param.standard_deviation));
+            this.AddCase(Type.Integer, field => new IntegerDataGenerator(field.name, field.param.mean, field.param.standard_deviation));
+            this.AddCase(Type.String, field => new StringDataGenerator(field.name, field.param.max_len));
+        }
+    }
+
+
     public class ConfigToFieldsTranslator: AVisitor<JObject, FieldAttributes>
     {
 
         public ConfigToFieldsTranslator()
         {
-            this.AddCase("double", jObject => {
+            this.AddCase(Type.Double, jObject => {
                 string name = (string) jObject["name"];
                 double mean = (double) jObject["distribution_params"]["mean"];
                 double std = (double) jObject["distribution_params"]["std"];
@@ -43,7 +53,7 @@ namespace Producer
                 return new FieldAttributes(name, "double", param);
             });
 
-            this.AddCase("int", jObject => {
+            this.AddCase(Type.Integer, jObject => {
                 string name = (string) jObject["name"];
                 double mean = (double) jObject["distribution_params"]["mean"];
                 double std = (double) jObject["distribution_params"]["std"];
@@ -55,7 +65,7 @@ namespace Producer
                 return new FieldAttributes(name, "int", param);
             });
 
-            this.AddCase("string", jObject => {
+            this.AddCase(Type.String, jObject => {
                 string name = (string) jObject["name"];
                 int maxlen = (int) jObject["distribution_params"]["max_len"];
                 FieldParam param = new FieldParam

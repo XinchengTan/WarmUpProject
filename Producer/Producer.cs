@@ -14,24 +14,8 @@ namespace Producer
         public Producer(int amount, List<FieldAttributes> fields)
         {
             this.Amount = amount;
-            this.recordGenerator = new RecordGeneratorWithError(this.MakeFieldDataGenerators(fields));
+            this.recordGenerator = new RecordGeneratorWithError(fields);
 
-        }
-
-
-        private static readonly Dictionary<string, IFieldDataGeneratorFactory> typeToFacMap = new Dictionary<string, IFieldDataGeneratorFactory>
-        {
-            {"double", new DoubleDataGeneratorFactory() },
-            {"int", new IntegerDataGeneratorFactory() },
-            {"string", new StringDataGeneratorFactory() }
-        };
-
-
-        private List<IFieldDataGenerator> MakeFieldDataGenerators(List<FieldAttributes> fields)
-        {
-            List<IFieldDataGenerator> generators = new List<IFieldDataGenerator>();
-            fields.ForEach(field => generators.Add(typeToFacMap[field.typeID].Make(field)));
-            return generators;
         }
 
         // Sends one data record

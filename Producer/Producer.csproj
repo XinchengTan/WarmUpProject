@@ -62,9 +62,10 @@
     <Compile Include="ConfigDefs.cs" />
     <Compile Include="RecordGenerator.cs" />
     <Compile Include="IProducerToConsumerAdpt.cs" />
-    <Compile Include="Translator.cs" />
+    <Compile Include="Visitors.cs" />
     <Compile Include="Producer.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="TypeDefinition.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

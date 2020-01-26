@@ -7,38 +7,38 @@ namespace Producer
 
 {
 
-    public interface IFieldDataGeneratorFactory
-    {
-        IFieldDataGenerator Make(FieldAttributes field);
-    }
+    //public interface IFieldDataGeneratorFactory
+    //{
+    //    IFieldDataGenerator Make(FieldAttributes field);
+    //}
 
-    public class DoubleDataGeneratorFactory : IFieldDataGeneratorFactory
-    {
-        public IFieldDataGenerator Make(FieldAttributes field)
-        {
-            return new DoubleDataGenerator(field.name, field.param.mean, field.param.standard_deviation);
+    //public class DoubleDataGeneratorFactory : IFieldDataGeneratorFactory
+    //{
+    //    public IFieldDataGenerator Make(FieldAttributes field)
+    //    {
+    //        return new DoubleDataGenerator(field.name, field.param.mean, field.param.standard_deviation);
 
-        }
-    }
+    //    }
+    //}
 
-    public class IntegerDataGeneratorFactory : IFieldDataGeneratorFactory
-    {
-        public IFieldDataGenerator Make(FieldAttributes field)
-        {
-            return new IntegerDataGenerator(field.name, field.param.mean, field.param.standard_deviation);
+    //public class IntegerDataGeneratorFactory : IFieldDataGeneratorFactory
+    //{
+    //    public IFieldDataGenerator Make(FieldAttributes field)
+    //    {
+    //        return new IntegerDataGenerator(field.name, field.param.mean, field.param.standard_deviation);
 
-        }
-    }
+    //    }
+    //}
 
 
-    public class StringDataGeneratorFactory : IFieldDataGeneratorFactory
-    {
-        public IFieldDataGenerator Make(FieldAttributes field)
-        {
-            return new StringDataGenerator(field.name, field.param.max_len);
+    //public class StringDataGeneratorFactory : IFieldDataGeneratorFactory
+    //{
+    //    public IFieldDataGenerator Make(FieldAttributes field)
+    //    {
+    //        return new StringDataGenerator(field.name, field.param.max_len);
 
-        }
-    }
+    //    }
+    //}
 
 
     public interface IFieldDataGenerator
@@ -47,6 +47,8 @@ namespace Producer
         string GetFieldName();
 
     }
+
+
 
 
     public interface IDataGenerator<T> : IFieldDataGenerator

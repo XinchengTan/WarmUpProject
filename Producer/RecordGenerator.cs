@@ -13,9 +13,9 @@ namespace Producer
     {
         private readonly IRecordGenerator gen;
 
-        public RecordGeneratorWithError(List<IFieldDataGenerator> fieldDataGens)
+        public RecordGeneratorWithError(List<FieldAttributes> fields)
         {
-            this.gen = new AdditionalFieldErrorGenerator(new MissingFieldErrorGenerator(new WrongTypeErrorGenerator(new RecordGenerator(fieldDataGens))));
+            this.gen = new AdditionalFieldErrorGenerator(new MissingFieldErrorGenerator(new WrongTypeErrorGenerator(new RecordGenerator(fields))));
         }
 
         public JObject GenerateRecord()
@@ -29,9 +29,12 @@ namespace Producer
     {
         private readonly List<IFieldDataGenerator> fieldDataGens;
 
-        public RecordGenerator(List<IFieldDataGenerator> fieldDataGens)
+        public RecordGenerator(List<FieldAttributes> fields)
         {
-            this.fieldDataGens = fieldDataGens;
+            FieldDataGeneratorFactory fact = new FieldDataGeneratorFactory();
+            List<IFieldDataGenerator> gens = new List<IFieldDataGenerator>();
+            fields.ForEach(field => fact.CaseAt(field.typeID, field));
+            this.fieldDataGens = gens;
         }
 
 
