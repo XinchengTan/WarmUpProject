@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Producer
 {
@@ -24,6 +25,7 @@ namespace Producer
             {"int", new IntegerDataGeneratorFactory() },
             {"string", new StringDataGeneratorFactory() }
         };
+
 
         private List<IFieldDataGenerator> MakeFieldDataGenerators(List<FieldAttributes> fields)
         {

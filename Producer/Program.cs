@@ -10,7 +10,7 @@ namespace Producer
 {
     class MainClass
     {
-        private static string LOCAL_FILEPATH = "/Users/caratan/Desktop/Spring 2020/producerConfig.json";
+        //private static string LOCAL_FILEPATH = "/Users/caratan/Desktop/Spring 2020/producerConfig.json";
 
         public static void Main(string[] args)
         {
@@ -45,26 +45,6 @@ namespace Producer
         }
 
 
-        private static FullConfig ParseConfig(string? filePath)
-        {
-            Console.WriteLine($"Echoing input file path: {filePath}");
-
-            if (String.IsNullOrEmpty(filePath))
-            {
-                // TODO: Throw exception
-                Console.WriteLine("Got empty file path! Start trying default path...");
-                filePath = LOCAL_FILEPATH;
-            }
-
-            using (StreamReader stream = File.OpenText(filePath))
-            using (JsonTextReader reader = new JsonTextReader(stream))
-            {
-                JObject jConfig = (JObject) JToken.ReadFrom(reader);
-                ConfigToFieldsTranslator parser = new ConfigToFieldsTranslator();
-                FullConfig cfg = parser.Translate(jConfig);
-
-                return cfg;
-            }
-        }
+        
     }
 }

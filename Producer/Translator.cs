@@ -14,7 +14,7 @@ namespace Producer
             translator.Add(typeID, translatorCase);
         }
 
-        private FieldAttributes CaseAt(string typeID, JObject value)
+        public FieldAttributes CaseAt(string typeID, JObject value)
         {
             return translator[typeID].Invoke(value);
         }
@@ -56,23 +56,6 @@ namespace Producer
             });
         }
 
-        // Takes in the whole config JSON file as a JObject and returns a list of Fields
-        public FullConfig Translate(JObject config)
-        {
-            List<FieldAttributes> fields = new List<FieldAttributes>();
-            foreach(JObject fieldConfig in (JArray) config["dimension_attributes"])
-            {
-                string typeID = (string)fieldConfig["type"];
-                fields.Add(this.CaseAt(typeID, fieldConfig));
-            }
-            FullConfig fullConfig = new FullConfig(
-                (int)config["threads_count"],
-                (int)config["records_count"],
-                (double)config["error_rate"],
-                fields
-                );
-
-            return fullConfig;
-        }
+        
     }
 }

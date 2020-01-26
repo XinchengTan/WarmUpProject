@@ -64,6 +64,7 @@
     <Compile Include="IProducerToConsumerAdpt.cs" />
     <Compile Include="Translator.cs" />
     <Compile Include="Producer.cs" />
+    <Compile Include="Parser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
