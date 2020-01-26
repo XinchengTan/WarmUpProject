@@ -9,12 +9,12 @@ namespace Producer
 
         public int Amount { get; private set; }
 
-        private RecordGenerator recordGenerator;
+        private readonly IRecordGenerator recordGenerator;
 
         public Producer(int amount, List<FieldAttributes> fields)
         {
             this.Amount = amount;
-            this.recordGenerator = new RecordGenerator(this.MakeFieldDataGenerators(fields));
+            this.recordGenerator = new RecordGeneratorWithError(this.MakeFieldDataGenerators(fields));
 
         }
 
@@ -37,7 +37,7 @@ namespace Producer
         // Sends one data record
         public void SendRecord(IProducerToConsumerAdpt adpt)
         {
-            adpt.Send(recordGenerator.MakeRecord());
+            adpt.Send(recordGenerator.GenerateRecord());
             this.Amount --;
         }
 

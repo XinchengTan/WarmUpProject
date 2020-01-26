@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Producer
 {
-    class MainClass
+    class Controller
     {
         //private static string LOCAL_FILEPATH = "/Users/caratan/Desktop/Spring 2020/producerConfig.json";
 
@@ -18,7 +18,8 @@ namespace Producer
             Console.WriteLine("Please enter an absolute path to config file:\n");
             // Start parsing
             string? filePath = Console.ReadLine();
-            FullConfig parsed_config = ParseConfig(filePath);
+            //FullConfig parsed_config = ParseConfig(filePath);
+            FullConfig parsed_config = Parser.ParseConfig(filePath);
             Producer producer = new Producer(parsed_config.records_count, parsed_config.fields);
 
 

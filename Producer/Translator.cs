@@ -4,27 +4,37 @@ using Newtonsoft.Json.Linq;
 
 namespace Producer
 {
-    // This is a visitor
-    public class ConfigToFieldsTranslator
+
+    public interface IVisitor<THost, TResult>
     {
+        TResult CaseAt(string id, THost host);
+    }
 
-        private readonly Dictionary<string, Func<JObject, FieldAttributes>> translator = new Dictionary<string, Func<JObject, FieldAttributes>>();
-        private void AddCase(string typeID, Func<JObject, FieldAttributes> translatorCase)
+    public abstract class AVisitor<THost, TResult>
+    {
+        private readonly Dictionary<string, Func<THost, TResult>> funcs = new Dictionary<string, Func<THost, TResult>>();
+
+        public TResult CaseAt(string id, THost host)
         {
-            translator.Add(typeID, translatorCase);
+            return funcs[id].Invoke(host);
         }
 
-        public FieldAttributes CaseAt(string typeID, JObject value)
+        public void AddCase(string id, Func<THost, TResult> func)
         {
-            return translator[typeID].Invoke(value);
+            funcs.Add(id, func);
         }
+    }
+
+    // This is a visitor
+    public class ConfigToFieldsTranslator: AVisitor<JObject, FieldAttributes>
+    {
 
         public ConfigToFieldsTranslator()
         {
             this.AddCase("double", jObject => {
-                string name = (string)jObject["name"];
-                double mean = (double)jObject["distribution_params"]["mean"];
-                double std = (double)jObject["distribution_params"]["std"];
+                string name = (string) jObject["name"];
+                double mean = (double) jObject["distribution_params"]["mean"];
+                double std = (double) jObject["distribution_params"]["std"];
                 FieldParam param = new FieldParam
                 {
                     mean = mean,
@@ -34,9 +44,9 @@ namespace Producer
             });
 
             this.AddCase("int", jObject => {
-                string name = (string)jObject["name"];
-                double mean = (double)jObject["distribution_params"]["mean"];
-                double std = (double)jObject["distribution_params"]["std"];
+                string name = (string) jObject["name"];
+                double mean = (double) jObject["distribution_params"]["mean"];
+                double std = (double) jObject["distribution_params"]["std"];
                 FieldParam param = new FieldParam
                 {
                     mean = mean,
@@ -46,8 +56,8 @@ namespace Producer
             });
 
             this.AddCase("string", jObject => {
-                string name = (string)jObject["name"];
-                int maxlen = (int)jObject["distribution_params"]["max_len"];
+                string name = (string) jObject["name"];
+                int maxlen = (int) jObject["distribution_params"]["max_len"];
                 FieldParam param = new FieldParam
                 {
                     max_len = maxlen
