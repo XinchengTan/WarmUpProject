@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Producer
 {
@@ -19,18 +21,20 @@ namespace Producer
         }
 
         // Sends one data record
-        public void SendRecord(IProducerToConsumerAdpt adpt)
+        public void SendRecord(IProducerToConsumerAdpt adpt, string receiver_addr)
         {
-            adpt.Send(recordGenerator.GenerateRecord());
-            this.Amount --;
+            JObject record = recordGenerator.GenerateRecord();
+            Console.WriteLine($"Generated Data Record: {record}");
+            //adpt.Send(record, receiver_addr); //TODO: Uncomment me to test connection with consumer!
+            this.Amount--;
         }
 
         // Sends all data records required
-        public void SendAllRecords(IProducerToConsumerAdpt adpt)
+        public void SendAllRecords(IProducerToConsumerAdpt adpt, string receiver_addr)
         {
-            while(this.Amount != 0)
+            while (this.Amount != 0)
             {
-                this.SendRecord(adpt);
+                this.SendRecord(adpt, receiver_addr);
             }
         }
     }

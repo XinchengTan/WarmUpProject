@@ -10,15 +10,16 @@ namespace Producer
 {
     class Controller
     {
-        //private static string LOCAL_FILEPATH = "/Users/caratan/Desktop/Spring 2020/producerConfig.json";
+        private static string LOCAL_FILEPATH = "/Users/caratan/Desktop/Spring 2020/producerConfig.json";
+        private static string RECEIVER_ADDR = "http://localhost:7071/api/ProducerAzure";
 
         public static void Main(string[] args)
         {
 
             Console.WriteLine("Please enter an absolute path to config file:\n");
             // Start parsing
-            string? filePath = Console.ReadLine();
-            //FullConfig parsed_config = ParseConfig(filePath);
+            string? filePath = Console.ReadLine() ?? LOCAL_FILEPATH;
+            string hostAddr = RECEIVER_ADDR;
             FullConfig parsed_config = Parser.ParseConfig(filePath);
             Producer producer = new Producer(parsed_config.records_count, parsed_config.fields);
 
@@ -26,26 +27,19 @@ namespace Producer
             // TODO: Connect with consumer and confirm
 
 
-
             // Make and send Records
             Console.WriteLine("Generated Data Records: ");
             try
             {
-                producer.SendAllRecords(new ProducerToDefaultConsumerAddpt());
+                producer.SendAllRecords(new ProducerToDefaultConsumerAddpt(), hostAddr);
                 // Console.WriteLine(record.ToString());
             }
             catch (WebException webExcp)
             {
 
             }
-
-
-
             // Exit
             Console.WriteLine("Console exiting...");
         }
-
-
-        
     }
 }

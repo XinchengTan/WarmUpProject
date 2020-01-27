@@ -8,7 +8,7 @@ namespace Producer
 {
     public interface IProducerToConsumerAdpt
     {
-        void Send(JToken record);
+        void Send(JToken record, string host_addr);
 
     }
 
@@ -16,19 +16,21 @@ namespace Producer
     {
         public int receivedResNum = 0;
 
-        public void Send(JToken record)
+        public void Send(JToken record, string host_addr)
         {
 
             {
                 try
                 {
                     // Create a request using a URL that can receive a post.   
-                    WebRequest request = WebRequest.Create("http://10.209.177.26:7074/api/DataStorage"); // TODO: change into the hosted service addr
-                                                                                                         // Set the Method property of the request to POST.  
+                    //WebRequest request = WebRequest.Create("http://10.209.177.26:7074/api/DataStorage"); // TODO: change into the hosted service addr
+                    // Set the Method property of the request to POST.  
+                    WebRequest request = WebRequest.Create(host_addr);
                     request.Method = "POST";
 
                     // Create POST data and convert it to a byte array.
                     string postData = record.ToString();
+                    Console.WriteLine($"Sending data record: {postData}");
                     // TODO: remove the above dummy data and replace with "record"
 
                     byte[] byteArray = Encoding.UTF8.GetBytes(postData);

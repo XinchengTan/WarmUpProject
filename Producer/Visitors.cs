@@ -25,7 +25,7 @@ namespace Producer
         }
     }
 
-    public class FieldDataGeneratorFactory: AVisitor<FieldAttributes, IFieldDataGenerator>
+    public class FieldDataGeneratorFactory : AVisitor<FieldAttributes, IFieldDataGenerator>
     {
         public FieldDataGeneratorFactory()
         {
@@ -36,15 +36,15 @@ namespace Producer
     }
 
 
-    public class ConfigToFieldsTranslator: AVisitor<JObject, FieldAttributes>
+    public class ConfigToFieldsTranslator : AVisitor<JObject, FieldAttributes>
     {
 
         public ConfigToFieldsTranslator()
         {
             this.AddCase(Type.Double, jObject => {
-                string name = (string) jObject["name"];
-                double mean = (double) jObject["distribution_params"]["mean"];
-                double std = (double) jObject["distribution_params"]["std"];
+                string name = (string)jObject["name"];
+                double mean = (double)jObject["distribution_params"]["mean"];
+                double std = (double)jObject["distribution_params"]["std"];
                 FieldParam param = new FieldParam
                 {
                     mean = mean,
@@ -54,9 +54,9 @@ namespace Producer
             });
 
             this.AddCase(Type.Integer, jObject => {
-                string name = (string) jObject["name"];
-                double mean = (double) jObject["distribution_params"]["mean"];
-                double std = (double) jObject["distribution_params"]["std"];
+                string name = (string)jObject["name"];
+                double mean = (double)jObject["distribution_params"]["mean"];
+                double std = (double)jObject["distribution_params"]["std"];
                 FieldParam param = new FieldParam
                 {
                     mean = mean,
@@ -66,8 +66,8 @@ namespace Producer
             });
 
             this.AddCase(Type.String, jObject => {
-                string name = (string) jObject["name"];
-                int maxlen = (int) jObject["distribution_params"]["max_len"];
+                string name = (string)jObject["name"];
+                int maxlen = (int)jObject["distribution_params"]["max_len"];
                 FieldParam param = new FieldParam
                 {
                     max_len = maxlen
@@ -76,6 +76,6 @@ namespace Producer
             });
         }
 
-        
+
     }
 }

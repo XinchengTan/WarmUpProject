@@ -15,7 +15,7 @@ namespace Producer
             this.name = name;
             this.typeID = typeID;
             this.param = param;
-        } 
+        }
     }
 
     public struct FieldParam

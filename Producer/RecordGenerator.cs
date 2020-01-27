@@ -9,13 +9,16 @@ namespace Producer
         JObject GenerateRecord();
     }
 
-    public class RecordGeneratorWithError: IRecordGenerator
+    public class RecordGeneratorWithError : IRecordGenerator
     {
         private readonly IRecordGenerator gen;
 
         public RecordGeneratorWithError(List<FieldAttributes> fields)
         {
-            this.gen = new AdditionalFieldErrorGenerator(new MissingFieldErrorGenerator(new WrongTypeErrorGenerator(new RecordGenerator(fields))));
+            this.gen = new AdditionalFieldErrorGenerator
+                (new MissingFieldErrorGenerator(
+                    new WrongTypeErrorGenerator(
+                        new RecordGenerator(fields))));
         }
 
         public JObject GenerateRecord()
@@ -25,15 +28,19 @@ namespace Producer
     }
 
 
-    public class RecordGenerator: IRecordGenerator
+    public class RecordGenerator : IRecordGenerator
     {
         private readonly List<IFieldDataGenerator> fieldDataGens;
 
         public RecordGenerator(List<FieldAttributes> fields)
         {
-            FieldDataGeneratorFactory fact = new FieldDataGeneratorFactory();
+            FieldDataGeneratorFactory factory = new FieldDataGeneratorFactory();
             List<IFieldDataGenerator> gens = new List<IFieldDataGenerator>();
-            fields.ForEach(field => fact.CaseAt(field.typeID, field));
+            foreach (FieldAttributes field in fields)
+            {
+                gens.Add(factory.CaseAt(field.typeID, field));
+            }
+            //fields.ForEach(field => factory.CaseAt(field.typeID, field));
             this.fieldDataGens = gens;
         }
 
@@ -41,10 +48,17 @@ namespace Producer
         public JObject GenerateRecord()
         {
             JObject record = new JObject();
-            fieldDataGens.ForEach(generator => record[generator.GetFieldName()] = generator.GenerateFieldData());
+            foreach (IFieldDataGenerator gen in fieldDataGens)
+            {
+                string field_name = gen.GetFieldName();
+                record[field_name] = gen.GenerateFieldData();
+                //Console.WriteLine($"Field_name: {field_name}, value: {record[field_name]}");
+            }
+            //fieldDataGens.ForEach(generator => record[generator.GetFieldName()] = generator.GenerateFieldData());
+
             return record;
         }
-        
+
     }
 
     public abstract class AErrorGenerator : IRecordGenerator
@@ -62,16 +76,19 @@ namespace Producer
             this.ErrorRate = errorRate;
         }
 
-        public AErrorGenerator(IRecordGenerator generator): this(generator, DEFULT_ERROR_RATE) { }
+        public AErrorGenerator(IRecordGenerator generator) : this(generator, DEFULT_ERROR_RATE) { }
 
         public JObject GenerateRecord()
         {
+            JObject rec = Generator.GenerateRecord();
+            //Console.WriteLine($"Record: {rec.ToString()}");
             if (random.NextDouble() < this.ErrorRate)
             {
-                return ApplyError(Generator.GenerateRecord());
-            } else
+                return ApplyError(rec);
+            }
+            else
             {
-                return Generator.GenerateRecord();
+                return rec;
             }
         }
 
@@ -81,7 +98,8 @@ namespace Producer
     public class ErrorGenerator : AErrorGenerator
     {
         public ErrorGenerator(IRecordGenerator gen) :
-            base(new AdditionalFieldErrorGenerator(new MissingFieldErrorGenerator(new WrongTypeErrorGenerator(gen)))) { }
+            base(new AdditionalFieldErrorGenerator(new MissingFieldErrorGenerator(new WrongTypeErrorGenerator(gen))))
+        { }
 
         protected override JObject ApplyError(JObject record)
         {
@@ -89,28 +107,29 @@ namespace Producer
         }
     }
 
-    public class WrongTypeErrorGenerator: AErrorGenerator
+    public class WrongTypeErrorGenerator : AErrorGenerator
     {
-        public WrongTypeErrorGenerator(IRecordGenerator gen): base(gen) { }
+        public WrongTypeErrorGenerator(IRecordGenerator gen) : base(gen) { }
 
         protected override JObject ApplyError(JObject record)
         {
-            JProperty property = record.Properties().GetEnumerator().Current;
-            string name = property.Name;
-            JTokenType valueType = property.Value.Type;
-            if (valueType == JTokenType.String)
-            {
-                record.Add(name, new JValue(0));
-            } else
-            {
-                record.Add(name, new JValue("wrong type data"));
-            }
+            // TODO: Debug me! property is null
+            //JProperty property = record.Properties().GetEnumerator().Current;
+            //string name = property.Name;
+            //JTokenType valueType = property.Value.Type;
+            //if (valueType == JTokenType.String)
+            //{
+            //    record.Add(name, new JValue(0));
+            //} else
+            //{
+            //    record.Add(name, new JValue("wrong type data"));
+            //}
             return record;
 
         }
     }
 
-    public class AdditionalFieldErrorGenerator: AErrorGenerator
+    public class AdditionalFieldErrorGenerator : AErrorGenerator
     {
         public AdditionalFieldErrorGenerator(IRecordGenerator gen) : base(gen) { }
 
