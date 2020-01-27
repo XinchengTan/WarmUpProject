@@ -63,7 +63,7 @@ namespace Producer
 
     public abstract class AErrorGenerator : IRecordGenerator
     {
-        private static readonly double DEFULT_ERROR_RATE = 0.1;
+        private static readonly double DEFULT_ERROR_RATE = 1;
 
         public IRecordGenerator Generator;
         public double ErrorRate { get; private set; }
@@ -114,16 +114,17 @@ namespace Producer
         protected override JObject ApplyError(JObject record)
         {
             // TODO: Debug me! property is null
-            //JProperty property = record.Properties().GetEnumerator().Current;
-            //string name = property.Name;
-            //JTokenType valueType = property.Value.Type;
-            //if (valueType == JTokenType.String)
-            //{
-            //    record.Add(name, new JValue(0));
-            //} else
-            //{
-            //    record.Add(name, new JValue("wrong type data"));
-            //}
+            JProperty property = record.Properties().GetEnumerator().Current;
+            string name = property.Name;
+            JTokenType valueType = property.Value.Type;
+            if (valueType == JTokenType.String)
+            {
+                record.Add(name, new JValue(0));
+            }
+            else
+            {
+                record.Add(name, new JValue("wrong type data"));
+            }
             return record;
 
         }

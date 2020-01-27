@@ -8,7 +8,7 @@ namespace Producer
 {
     public class Parser
     {
-        private static readonly string LOCAL_FILEPATH = "/Users/caratan/Desktop/COMP410/producerConfig.json";
+        private static readonly string LOCAL_FILEPATH = "/Users/shenhongyu/Desktop/config.json";
 
         public static FullConfig ParseConfig(string? filePath)
         {

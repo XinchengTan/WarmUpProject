@@ -12,7 +12,15 @@ namespace Producer
 
     }
 
-    public class ProducerToDefaultConsumerAddpt : IProducerToConsumerAdpt
+    public class DefaultAdpt : IProducerToConsumerAdpt
+    {
+        public void Send(JToken record, string host_addr)
+        {
+            
+        }
+    }
+
+    public class ProducerToDefaultConsumerAdpt : IProducerToConsumerAdpt
     {
         public int receivedResNum = 0;
 

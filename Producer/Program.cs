@@ -31,7 +31,7 @@ namespace Producer
             Console.WriteLine("Generated Data Records: ");
             try
             {
-                producer.SendAllRecords(new ProducerToDefaultConsumerAddpt(), hostAddr);
+                producer.SendAllRecords(new DefaultAdpt(), hostAddr);
                 // Console.WriteLine(record.ToString());
             }
             catch (WebException webExcp)
