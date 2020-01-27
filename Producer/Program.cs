@@ -20,12 +20,11 @@ namespace Producer
             // Start parsing
             string? filePath = Console.ReadLine() ?? LOCAL_FILEPATH;
             string hostAddr = RECEIVER_ADDR;
-            FullConfig parsed_config = Parser.ParseConfig(filePath);
+            FullConfig parsed_config = Util.ParseConfig(filePath);
 
-            if (parsed_config.Equals(new FullConfig()))
-            {
-    
-                Console.WriteLine("Type casting error: ");
+            if (parsed_config.Equals(default(FullConfig)))
+            {   
+                Console.WriteLine("Testing: Type casting error: ");
             } 
             else {
 

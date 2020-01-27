@@ -42,7 +42,6 @@ namespace Producer
         public ConfigToFieldsTranslator()
         {
             this.AddCase(Type.Double, jObject => {
-
                 try
                 {
                     string name = (string)jObject["name"];
@@ -55,8 +54,9 @@ namespace Producer
                     };
                     return new FieldAttributes(name, "double", param);
                 }
-                catch (Exception e) {
-                    Console.WriteLine("Type casting error in double distribution_params"); 
+                catch (Exception e)
+                {
+                    Console.WriteLine("Type casting error in double distribution_params");
                     return new FieldAttributes();
                 }
             });

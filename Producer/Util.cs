@@ -6,9 +6,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Producer
 {
-    public class Util
+    public class Parser
     {
-        private static readonly string LOCAL_FILEPATH = "/Users/shenhongyu/Desktop/config.json";
+        private static readonly string LOCAL_FILEPATH = "/Users/caratan/Desktop/COMP410/producerConfig.json";
 
         public static FullConfig ParseConfig(string? filePath)
         {
@@ -31,7 +31,7 @@ namespace Producer
         }
 
         // Takes in the whole config JSON file as a JObject and returns a list of Fields
-        private static FullConfig Translate(JObject config)
+        private static FullConfig? Translate(JObject config)
         {
             ConfigToFieldsTranslator translator = new ConfigToFieldsTranslator();
             List<FieldAttributes> fields = new List<FieldAttributes>();
@@ -60,17 +60,8 @@ namespace Producer
             catch (Exception e)
             {
                 Console.WriteLine("Type casting error in thread or record or error_rate.");
-                return new FullConfig();
+                return Nullable<FullConfig>;
             }
-
-            //FullConfig fullConfig = new FullConfig(
-
-            //    TypeCastingHandler.intTypeCasting(config, "threads_count"),
-            //    TypeCastingHandler.intTypeCasting(config, "records_count"),
-            //    TypeCastingHandler.doubleTypeCasting(config, "error_rate"),
-            //    fields
-            //);
-            //return fullConfig;
         }
     }
 }
