@@ -42,37 +42,59 @@ namespace Producer
         public ConfigToFieldsTranslator()
         {
             this.AddCase(Type.Double, jObject => {
-                string name = (string)jObject["name"];
-                double mean = (double)jObject["distribution_params"]["mean"];
-                double std = (double)jObject["distribution_params"]["std"];
-                FieldParam param = new FieldParam
+
+                try
                 {
-                    mean = mean,
-                    standard_deviation = std
-                };
-                return new FieldAttributes(name, "double", param);
+                    string name = (string)jObject["name"];
+                    double mean = (double)jObject["distribution_params"]["mean"];
+                    double std = (double)jObject["distribution_params"]["std"];
+                    FieldParam param = new FieldParam
+                    {
+                        mean = mean,
+                        standard_deviation = std
+                    };
+                    return new FieldAttributes(name, "double", param);
+                }
+                catch (Exception e) {
+                    Console.WriteLine("Type casting error in double distribution_params"); 
+                    return new FieldAttributes();
+                }
             });
 
             this.AddCase(Type.Integer, jObject => {
-                string name = (string)jObject["name"];
-                double mean = (double)jObject["distribution_params"]["mean"];
-                double std = (double)jObject["distribution_params"]["std"];
-                FieldParam param = new FieldParam
+                try {
+                    string name = (string)jObject["name"];
+                    double mean = (double)jObject["distribution_params"]["mean"];
+                    double std = (double)jObject["distribution_params"]["std"];
+                    FieldParam param = new FieldParam
+                    {
+                        mean = mean,
+                        standard_deviation = std
+                    };
+                    return new FieldAttributes(name, "int", param);
+                }
+                catch (Exception e)
                 {
-                    mean = mean,
-                    standard_deviation = std
-                };
-                return new FieldAttributes(name, "int", param);
+                    Console.WriteLine("Type casting error in integer distribution_params");
+                    return new FieldAttributes();
+                }
             });
 
             this.AddCase(Type.String, jObject => {
-                string name = (string)jObject["name"];
-                int maxlen = (int)jObject["distribution_params"]["max_len"];
-                FieldParam param = new FieldParam
+                try {
+                    string name = (string)jObject["name"];
+                    int maxlen = (int)jObject["distribution_params"]["max_len"];
+                    FieldParam param = new FieldParam
+                    {
+                        max_len = maxlen
+                    };
+                    return new FieldAttributes(name, "string", param);
+                }
+                catch (Exception e)
                 {
-                    max_len = maxlen
-                };
-                return new FieldAttributes(name, "string", param);
+                    Console.WriteLine("Type casting error in string distribution_params");
+                    return new FieldAttributes();
+                }
             });
         }
 

@@ -40,14 +40,37 @@ namespace Producer
                 string typeID = (string)fieldConfig["type"];
                 fields.Add(translator.CaseAt(typeID, fieldConfig));
             }
-            FullConfig fullConfig = new FullConfig(
-                (int)config["threads_count"],
-                (int)config["records_count"],
-                (double)config["error_rate"],
-                fields
-                );
 
-            return fullConfig;
+
+            // TESTING:
+            try
+            {
+                int threads_count = (int)config["threads_count"];
+                int records_count = (int)config["records_count"];
+                double error_rate = (double)config["error_rate"];
+
+                FullConfig fullConfig = new FullConfig(
+                    threads_count,
+                    records_count,
+                    error_rate,
+                    fields
+                );
+                return fullConfig;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Type casting error in thread or record or error_rate.");
+                return new FullConfig();
+            }
+
+            //FullConfig fullConfig = new FullConfig(
+
+            //    TypeCastingHandler.intTypeCasting(config, "threads_count"),
+            //    TypeCastingHandler.intTypeCasting(config, "records_count"),
+            //    TypeCastingHandler.doubleTypeCasting(config, "error_rate"),
+            //    fields
+            //);
+            //return fullConfig;
         }
     }
 }
