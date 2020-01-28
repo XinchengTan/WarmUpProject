@@ -48,7 +48,7 @@ namespace Producer
             try
             {
                 int threads_count = (int)config["threads_count"];
-                int records_count = (int)config["records_count"];
+                int records_count = (int)config["records_count"] < 2147483647 ? (int)config["records_count"] : 2147483647;
                 double error_rate = (double)config["error_rate"];
 
                 FullConfig fullConfig = new FullConfig(
