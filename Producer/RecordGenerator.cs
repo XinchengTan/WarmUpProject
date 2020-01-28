@@ -154,8 +154,8 @@ namespace Producer
 
         protected override JObject ApplyError(JObject record)
         {
-            JProperty property = record.Properties().GetEnumerator().Current;
-            record.Remove(property.Name);
+            //JProperty property = record.Properties().GetEnumerator().Current;
+            //record.Remove(property.Name);
             return record;
         }
     }

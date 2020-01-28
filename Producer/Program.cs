@@ -19,27 +19,43 @@ namespace Producer
             Console.WriteLine("Please enter an absolute path to config file:\n");
             // Start parsing
             string? filePath = Console.ReadLine() ?? LOCAL_FILEPATH;
-            string hostAddr = RECEIVER_ADDR;
-            FullConfig parsed_config = Parser.ParseConfig(filePath);
-            Producer producer = new Producer(parsed_config.records_count, parsed_config.fields);
+            string hostAddr = RECEIVER_ADDR;           
+            FullConfig? parsed_config = Util.ParseConfig(filePath);
 
-
-            // TODO: Connect with consumer and confirm
-
-
-            // Make and send Records
-            Console.WriteLine("Generated Data Records: ");
-            try
+            if (parsed_config.Equals(null))
             {
-                producer.SendAllRecords(new DefaultAdpt(), hostAddr);
-                // Console.WriteLine(record.ToString());
+                // Type casting error
             }
-            catch (WebException webExcp)
-            {
+            else {
+                FullConfig new_parsed_config = ((FullConfig)parsed_config);
+                //foreach (FieldAttributes field in new_parsed_config.fields) {
+                //    if (field.Equals(default(FieldAttributes))) {
+                //        // Type casting error in dimension_attributes
+                //        Console.WriteLine("Testing....");
+                //        return;
+                //    }
+                //}
 
+                Producer producer = new Producer(new_parsed_config.records_count, new_parsed_config.fields);
+                
+                // TODO: Connect with consumer and confirm
+
+
+                // Make and send Records
+                Console.WriteLine("Generated Data Records: ");
+                Console.WriteLine(producer.MakeRecord().ToString());
+                try
+                {
+                    producer.SendAllRecords(new ProducerToDefaultConsumerAddpt(), hostAddr);
+                    // Console.WriteLine(record.ToString());
+                }
+                catch (WebException webExcp)
+                {
+
+                }
+                // Exit
+                Console.WriteLine("Console exiting...");
             }
-            // Exit
-            Console.WriteLine("Console exiting...");
         }
     }
 }
