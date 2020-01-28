@@ -35,11 +35,10 @@ namespace Producer
 
         public RecordGenerator(List<FieldAttributes> fields)
         {
-            FieldDataGeneratorFactory factory = new FieldDataGeneratorFactory();
             List<IFieldDataGenerator> gens = new List<IFieldDataGenerator>();
             foreach (FieldAttributes field in fields)
             {
-                gens.Add(factory.CaseAt(field.typeID, field));
+                gens.Add(Util.MakeFieldDataGenerator(field));
             }
             this.fieldDataGens = gens;
         }

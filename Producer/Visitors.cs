@@ -51,7 +51,7 @@ namespace Producer
                     mean = mean,
                     standard_deviation = std
                 };
-                return new FieldAttributes(name, "double", param);
+                return new FieldAttributes(name, Type.Double, param);
             });
 
             this.AddCase(Type.Integer, jObject => {
@@ -64,7 +64,7 @@ namespace Producer
                     mean = mean,
                     standard_deviation = std
                 };
-                return new FieldAttributes(name, "int", param);
+                return new FieldAttributes(name, Type.Integer, param);
             });
 
             this.AddCase(Type.String, jObject => {
@@ -75,7 +75,7 @@ namespace Producer
                 {
                     max_len = maxlen
                 };
-                return new FieldAttributes(name, "string", param);
+                return new FieldAttributes(name, Type.String, param);
             });
         }
 

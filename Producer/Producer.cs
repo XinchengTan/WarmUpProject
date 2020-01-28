@@ -21,10 +21,6 @@ namespace Producer
         }
 
 
-        public JObject MakeRecord() {
-            return recordGenerator.GenerateRecord();
-        }
-
         // Sends one data record
         public void SendRecord(IProducerToConsumerAdpt adpt, string receiver_addr)
         {

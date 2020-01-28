@@ -29,22 +29,20 @@ namespace Producer
             }
             else {
                 FullConfig new_parsed_config = ((FullConfig)parsed_config);
-                //foreach (FieldAttributes field in new_parsed_config.fields) {
-                //    if (field.Equals(default(FieldAttributes))) {
-                //        // Type casting error in dimension_attributes
-                //        Console.WriteLine("Testing....");
-                //        return;
-                //    }
-                //}
 
+                // Initialize producer
                 Producer producer = new Producer(new_parsed_config.records_count, new_parsed_config.fields);
-                
+
+                // Initialize adapter
+                // TODO: Decide which consumer to connect with i.e. which adapter to use
+
+
                 // TODO: Connect with consumer and confirm
 
 
+
+
                 // Make and send Records
-                Console.WriteLine("Generated Data Records: ");
-                Console.WriteLine(producer.MakeRecord().ToString());
                 try
                 {
                     producer.SendAllRecords(new ProducerToDefaultConsumerAdpt(), hostAddr);

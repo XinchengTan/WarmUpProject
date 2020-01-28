@@ -12,7 +12,11 @@ namespace Producer
     class Util {
         private static readonly string LOCAL_FILEPATH = "/Users/shenhongyu/Desktop/producerConfig.json";
 
-        public static FullConfig? ParseConfig(string? filePath)
+        private static readonly ConfigToFieldsTranslator configToFieldsTranslator = new ConfigToFieldsTranslator();
+        private static readonly FieldDataGeneratorFactory generatorFactory = new FieldDataGeneratorFactory();
+
+
+        private static JObject LoadConfig(string? filePath)
         {
             Console.WriteLine($"Echoing input file path: {filePath}");
 
@@ -26,30 +30,27 @@ namespace Producer
             using StreamReader stream = File.OpenText(filePath);
             using JsonTextReader reader = new JsonTextReader(stream);
             JObject jConfig = (JObject)JToken.ReadFrom(reader);
-            ConfigToFieldsTranslator parser = new ConfigToFieldsTranslator();
-            FullConfig? cfg = Translate(jConfig);
-
-            return cfg;
+            return jConfig;
         }
 
-        // Takes in the whole config JSON file as a JObject and returns a list of Fields
-        private static FullConfig? Translate(JObject config)
+        public static FullConfig? ParseConfig(string? filePath)
         {
-            ConfigToFieldsTranslator translator = new ConfigToFieldsTranslator();
+            JObject jConfig = LoadConfig(filePath);
+
             List<FieldAttributes> fields = new List<FieldAttributes>();
-            foreach (JObject fieldConfig in (JArray)config["dimension_attributes"])
+            foreach (JObject fieldConfig in (JArray)jConfig["dimension_attributes"])
             {
                 string typeID = (string)fieldConfig["type"];
-                fields.Add(translator.CaseAt(typeID, fieldConfig));
+                fields.Add(configToFieldsTranslator.CaseAt(typeID, fieldConfig));
             }
 
 
             // TESTING:
             try
             {
-                int threads_count = (int)config["threads_count"];
-                int records_count = (int)config["records_count"] < 2147483647 ? (int)config["records_count"] : 2147483647;
-                double error_rate = (double)config["error_rate"];
+                int threads_count = (int)jConfig["threads_count"];
+                int records_count = (int)jConfig["records_count"] < 2147483647 ? (int)jConfig["records_count"] : 2147483647;
+                double error_rate = (double)jConfig["error_rate"];
 
                 FullConfig fullConfig = new FullConfig(
                     threads_count,
@@ -64,14 +65,22 @@ namespace Producer
                 Console.WriteLine("Type casting error in thread or record or error_rate.");
                 return null;
             }
+
         }
 
 
-        public static Nullable<T> GetValueOrNull<T>(Object obj) where T : struct
+        public static IFieldDataGenerator MakeFieldDataGenerator(FieldAttributes f)
+        {
+            return generatorFactory.CaseAt(f.typeID, f);
+
+        }
+
+
+        public static T? GetValueOrNull<T>(Object obj) where T : struct
         {
             try
             {
-                return (T)obj;
+                return (T) obj;
             }
             catch
             {
