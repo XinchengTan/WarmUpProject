@@ -10,7 +10,8 @@ namespace Producer
 {
     class Controller
     {
-        private static string LOCAL_FILEPATH = "/Users/caratan/Desktop/Spring 2020/producerConfig.json";
+        // private static string LOCAL_FILEPATH = "/Users/caratan/Desktop/Spring 2020/producerConfig.json";
+        private static string LOCAL_FILEPATH = "/Users/shenhongyu/Desktop/producerConfig.json";
         private static string RECEIVER_ADDR = "http://localhost:7071/api/ProducerAzure";
 
         public static void Main(string[] args)
@@ -46,7 +47,7 @@ namespace Producer
                 Console.WriteLine(producer.MakeRecord().ToString());
                 try
                 {
-                    producer.SendAllRecords(new ProducerToDefaultConsumerAddpt(), hostAddr);
+                    producer.SendAllRecords(new ProducerToDefaultConsumerAdpt(), hostAddr);
                     // Console.WriteLine(record.ToString());
                 }
                 catch (WebException webExcp)

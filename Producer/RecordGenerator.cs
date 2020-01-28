@@ -15,10 +15,11 @@ namespace Producer
 
         public RecordGeneratorWithError(List<FieldAttributes> fields)
         {
-            this.gen = new AdditionalFieldErrorGenerator
-                (new MissingFieldErrorGenerator(
-                    new WrongTypeErrorGenerator(
-                        new RecordGenerator(fields))));
+            this.gen = new NullErrorGenerator(
+                new AdditionalFieldErrorGenerator(
+                    new MissingFieldErrorGenerator(
+                        new WrongTypeErrorGenerator(
+                            new RecordGenerator(fields)))));
         }
 
         public JObject GenerateRecord()
@@ -40,7 +41,6 @@ namespace Producer
             {
                 gens.Add(factory.CaseAt(field.typeID, field));
             }
-            //fields.ForEach(field => factory.CaseAt(field.typeID, field));
             this.fieldDataGens = gens;
         }
 
@@ -51,10 +51,9 @@ namespace Producer
             foreach (IFieldDataGenerator gen in fieldDataGens)
             {
                 string field_name = gen.GetFieldName();
-                record[field_name] = gen.GenerateFieldData();
+                record.Add(field_name, gen.GenerateFieldData());
                 //Console.WriteLine($"Field_name: {field_name}, value: {record[field_name]}");
             }
-            //fieldDataGens.ForEach(generator => record[generator.GetFieldName()] = generator.GenerateFieldData());
 
             return record;
         }
@@ -63,7 +62,7 @@ namespace Producer
 
     public abstract class AErrorGenerator : IRecordGenerator
     {
-        private static readonly double DEFULT_ERROR_RATE = 1;
+        private static readonly double DEFULT_ERROR_RATE = 0.1;
 
         public IRecordGenerator Generator;
         public double ErrorRate { get; private set; }
@@ -109,28 +108,18 @@ namespace Producer
 
     public class WrongTypeErrorGenerator : AErrorGenerator
     {
-        public WrongTypeErrorGenerator(IRecordGenerator gen) : base(gen, 1) { }
+        public WrongTypeErrorGenerator(IRecordGenerator gen) : base(gen) { }
 
         protected override JObject ApplyError(JObject record)
         {
-            // TODO: Debug me! property is null
-
-            //JProperty property = new JProperty("dummy", "dummy");
-            //foreach ( JProperty p in record.Properties()) {
-            //    property = p;
-            //    break;
-            //}
-            //string name = property.Name;
-            //JTokenType valueType = property.Value.Type;
-            //record.Remove(name);
-            //if (valueType == JTokenType.String)
-            //{
-            //    record.Add(name, new JValue(0));
-            //}
-            //else
-            //{
-            //    record.Add(name, new JValue("wrong type data"));
-            //}
+            var e = record.Properties().GetEnumerator();
+            if(e.MoveNext())
+            {
+                JProperty property = e.Current;
+                JValue newValue = property.Value.Type == JTokenType.String ? new JValue(0) : new JValue("wrong type data");
+                record[property.Name] = newValue;
+            }
+            
             return record;
 
         }
@@ -147,6 +136,24 @@ namespace Producer
         }
     }
 
+    public class NullErrorGenerator : AErrorGenerator
+    {
+        public NullErrorGenerator(IRecordGenerator gen) : base(gen) { }
+
+        protected override JObject ApplyError(JObject record)
+        {
+            var e = record.Properties().GetEnumerator();
+            if (e.MoveNext())
+            {
+                JProperty property = e.Current;
+                record.Remove(property.Name);
+                record[property.Name] = null;
+            }
+            
+            return record;
+        }
+    }
+
     public class MissingFieldErrorGenerator : AErrorGenerator
     {
 
@@ -154,8 +161,13 @@ namespace Producer
 
         protected override JObject ApplyError(JObject record)
         {
-            //JProperty property = record.Properties().GetEnumerator().Current;
-            //record.Remove(property.Name);
+            var e = record.Properties().GetEnumerator();
+            if(e.MoveNext())
+            {
+                JProperty property = e.Current;
+                record.Remove(property.Name);
+            }
+            
             return record;
         }
     }

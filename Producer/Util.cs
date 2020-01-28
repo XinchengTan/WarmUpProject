@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace Producer
 {
     class Util {
-        private static readonly string LOCAL_FILEPATH = "/Users/caratan/Desktop/COMP410/producerConfig.json";
+        private static readonly string LOCAL_FILEPATH = "/Users/shenhongyu/Desktop/producerConfig.json";
 
         public static FullConfig? ParseConfig(string? filePath)
         {
