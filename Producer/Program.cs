@@ -19,23 +19,24 @@ namespace Producer
             Console.WriteLine("Please enter an absolute path to config file:\n");
             // Start parsing
             string? filePath = Console.ReadLine() ?? LOCAL_FILEPATH;
-            string hostAddr = RECEIVER_ADDR;
-            FullConfig parsed_config = Util.ParseConfig(filePath);
+            string hostAddr = RECEIVER_ADDR;           
+            FullConfig? parsed_config = Util.ParseConfig(filePath);
 
-            if (parsed_config.Equals(default(FullConfig)))
-            {   
-                Console.WriteLine("Testing: Type casting error: ");
-            } 
+            if (parsed_config.Equals(null))
+            {
+                // Type casting error
+            }
             else {
+                FullConfig new_parsed_config = ((FullConfig)parsed_config);
+                //foreach (FieldAttributes field in new_parsed_config.fields) {
+                //    if (field.Equals(default(FieldAttributes))) {
+                //        // Type casting error in dimension_attributes
+                //        Console.WriteLine("Testing....");
+                //        return;
+                //    }
+                //}
 
-                foreach (FieldAttributes field in parsed_config.fields) {
-                    if (field.Equals(new FieldAttributes())) {
-                        // Type casting error in dimension_attributes    
-                        return;
-                    }
-                }
-
-                Producer producer = new Producer(parsed_config.records_count, parsed_config.fields);
+                Producer producer = new Producer(new_parsed_config.records_count, new_parsed_config.fields);
                 
                 // TODO: Connect with consumer and confirm
 

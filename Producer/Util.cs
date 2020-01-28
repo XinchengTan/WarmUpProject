@@ -1,16 +1,18 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+
 namespace Producer
 {
-    public class Parser
-    {
+    class Util {
         private static readonly string LOCAL_FILEPATH = "/Users/caratan/Desktop/COMP410/producerConfig.json";
 
-        public static FullConfig ParseConfig(string? filePath)
+        public static FullConfig? ParseConfig(string? filePath)
         {
             Console.WriteLine($"Echoing input file path: {filePath}");
 
@@ -25,7 +27,7 @@ namespace Producer
             using JsonTextReader reader = new JsonTextReader(stream);
             JObject jConfig = (JObject)JToken.ReadFrom(reader);
             ConfigToFieldsTranslator parser = new ConfigToFieldsTranslator();
-            FullConfig cfg = Translate(jConfig);
+            FullConfig? cfg = Translate(jConfig);
 
             return cfg;
         }
@@ -60,7 +62,21 @@ namespace Producer
             catch (Exception e)
             {
                 Console.WriteLine("Type casting error in thread or record or error_rate.");
-                return Nullable<FullConfig>;
+                return null;
+            }
+        }
+
+
+        public static Nullable<T> GetValueOrNull<T>(Object obj) where T : struct
+        {
+            try
+            {
+                return (T)obj;
+            }
+            catch
+            {
+                //Console.WriteLine("Type casting error in Config file.");
+                return null;
             }
         }
     }

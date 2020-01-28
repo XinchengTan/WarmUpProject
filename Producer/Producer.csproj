@@ -64,8 +64,8 @@
     <Compile Include="IProducerToConsumerAdpt.cs" />
     <Compile Include="Visitors.cs" />
     <Compile Include="Producer.cs" />
-    <Compile Include="Parser.cs" />
     <Compile Include="TypeDefinition.cs" />
+    <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
