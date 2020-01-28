@@ -109,22 +109,28 @@ namespace Producer
 
     public class WrongTypeErrorGenerator : AErrorGenerator
     {
-        public WrongTypeErrorGenerator(IRecordGenerator gen) : base(gen) { }
+        public WrongTypeErrorGenerator(IRecordGenerator gen) : base(gen, 1) { }
 
         protected override JObject ApplyError(JObject record)
         {
             // TODO: Debug me! property is null
-            JProperty property = record.Properties().GetEnumerator().Current;
-            string name = property.Name;
-            JTokenType valueType = property.Value.Type;
-            if (valueType == JTokenType.String)
-            {
-                record.Add(name, new JValue(0));
-            }
-            else
-            {
-                record.Add(name, new JValue("wrong type data"));
-            }
+
+            //JProperty property = new JProperty("dummy", "dummy");
+            //foreach ( JProperty p in record.Properties()) {
+            //    property = p;
+            //    break;
+            //}
+            //string name = property.Name;
+            //JTokenType valueType = property.Value.Type;
+            //record.Remove(name);
+            //if (valueType == JTokenType.String)
+            //{
+            //    record.Add(name, new JValue(0));
+            //}
+            //else
+            //{
+            //    record.Add(name, new JValue("wrong type data"));
+            //}
             return record;
 
         }
