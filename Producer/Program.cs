@@ -31,7 +31,7 @@ namespace Producer
                 FullConfig new_parsed_config = ((FullConfig)parsed_config);
 
                 // Initialize producer
-                Producer producer = new Producer(new_parsed_config.records_count, new_parsed_config.fields);
+                Producer producer = new Producer(new_parsed_config.threads_count, new_parsed_config.records_count, new_parsed_config.fields);
 
                 // Initialize adapter
                 // TODO: Decide which consumer to connect with i.e. which adapter to use
@@ -45,7 +45,8 @@ namespace Producer
                 // Make and send Records
                 try
                 {
-                    producer.SendAllRecords(new ProducerToDefaultConsumerAdpt(), hostAddr);
+                    //producer.SendAllRecords(new ProducerToDefaultConsumerAdpt(), hostAddr);
+                    producer.ThreadSendAllRecords(new_parsed_config.threads_count, new ProducerToDefaultConsumerAdpt(), hostAddr);
                     // Console.WriteLine(record.ToString());
                 }
                 catch (WebException webExcp)
