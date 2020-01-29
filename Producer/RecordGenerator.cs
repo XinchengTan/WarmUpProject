@@ -9,24 +9,24 @@ namespace Producer
         JObject GenerateRecord();
     }
 
-    public class RecordGeneratorWithError : IRecordGenerator
-    {
-        private readonly IRecordGenerator gen;
+    //public class RecordGeneratorWithError : IRecordGenerator
+    //{
+    //    private readonly IRecordGenerator gen;
 
-        public RecordGeneratorWithError(List<FieldAttributes> fields)
-        {
-            this.gen = new NullErrorGenerator(
-                new AdditionalFieldErrorGenerator(
-                    new MissingFieldErrorGenerator(
-                        new WrongTypeErrorGenerator(
-                            new RecordGenerator(fields)))));
-        }
+    //    public RecordGeneratorWithError(List<FieldAttributes> fields)
+    //    {
+    //        this.gen = new AdditionalFieldErrorGenerator(
+    //                new MissingFieldErrorGenerator(
+    //                    new WrongTypeErrorGenerator(
+    //                        new RecordGenerator(fields))));
 
-        public JObject GenerateRecord()
-        {
-            return gen.GenerateRecord();
-        }
-    }
+    //    }
+
+    //    public JObject GenerateRecord()
+    //    {
+    //        return gen.GenerateRecord();
+    //    }
+    //}
 
 
     public class RecordGenerator : IRecordGenerator
@@ -61,12 +61,12 @@ namespace Producer
 
     public abstract class AErrorGenerator : IRecordGenerator
     {
-        private static readonly double DEFULT_ERROR_RATE = 0.1;
+        private static readonly double DEFULT_ERROR_RATE = 0;
 
         public IRecordGenerator Generator;
         public double ErrorRate { get; private set; }
 
-        private readonly Random random = new Random();
+        protected readonly Random random = new Random();
 
         public AErrorGenerator(IRecordGenerator generator, double errorRate)
         {
@@ -75,6 +75,7 @@ namespace Producer
         }
 
         public AErrorGenerator(IRecordGenerator generator) : this(generator, DEFULT_ERROR_RATE) { }
+
 
         public JObject GenerateRecord()
         {
@@ -93,21 +94,27 @@ namespace Producer
         protected abstract JObject ApplyError(JObject record);
     }
 
-    public class ErrorGenerator : AErrorGenerator
-    {
-        public ErrorGenerator(IRecordGenerator gen) :
-            base(new AdditionalFieldErrorGenerator(new MissingFieldErrorGenerator(new WrongTypeErrorGenerator(gen))))
-        { }
+    //public class ErrorGenerator : AErrorGenerator
+    //{
+    //    public ErrorGenerator(IRecordGenerator gen) :
+    //        base(new AdditionalFieldErrorGenerator(new MissingFieldErrorGenerator(new WrongTypeErrorGenerator(gen))))
+    //    { }
 
-        protected override JObject ApplyError(JObject record)
-        {
-            return record;
-        }
-    }
+    //    public ErrorGenerator(IRecordGenerator gen, double errorRate) :
+    //        base(new AdditionalFieldErrorGenerator(new MissingFieldErrorGenerator(new WrongTypeErrorGenerator(gen))))
+    //    { }
+
+    //    protected override JObject ApplyError(JObject record)
+    //    {
+    //        return record;
+    //    }
+    //}
 
     public class WrongTypeErrorGenerator : AErrorGenerator
     {
         public WrongTypeErrorGenerator(IRecordGenerator gen) : base(gen) { }
+
+        public WrongTypeErrorGenerator(IRecordGenerator gen, double rate) : base(gen, rate) { }
 
         protected override JObject ApplyError(JObject record)
         {
@@ -115,8 +122,16 @@ namespace Producer
             if(e.MoveNext())
             {
                 JProperty property = e.Current;
-                JValue newValue = property.Value.Type == JTokenType.String ? new JValue(0) : new JValue("wrong type data");
-                record[property.Name] = newValue;
+                if (this.random.NextDouble() < 0.5)
+                {
+                    record[property.Name] = null;
+                }
+                else
+                {
+                    JValue newValue = property.Value.Type == JTokenType.String ? new JValue(0) : new JValue("wrong type data");
+                    record[property.Name] = newValue;
+                }
+                
             }
             
             return record;
@@ -128,6 +143,8 @@ namespace Producer
     {
         public AdditionalFieldErrorGenerator(IRecordGenerator gen) : base(gen) { }
 
+        public AdditionalFieldErrorGenerator(IRecordGenerator gen, double rate) : base(gen, rate) { }
+
         protected override JObject ApplyError(JObject record)
         {
             record.Add("error", "This is an additional field");
@@ -135,28 +152,30 @@ namespace Producer
         }
     }
 
-    public class NullErrorGenerator : AErrorGenerator
-    {
-        public NullErrorGenerator(IRecordGenerator gen) : base(gen) { }
+    //public class NullErrorGenerator : AErrorGenerator
+    //{
+    //    public NullErrorGenerator(IRecordGenerator gen) : base(gen) { }
 
-        protected override JObject ApplyError(JObject record)
-        {
-            var e = record.Properties().GetEnumerator();
-            if (e.MoveNext())
-            {
-                JProperty property = e.Current;
-                record.Remove(property.Name);
-                record[property.Name] = null;
-            }
+    //    protected override JObject ApplyError(JObject record)
+    //    {
+    //        var e = record.Properties().GetEnumerator();
+    //        if (e.MoveNext())
+    //        {
+    //            JProperty property = e.Current;
+    //            record.Remove(property.Name);
+    //            record[property.Name] = null;
+    //        }
             
-            return record;
-        }
-    }
+    //        return record;
+    //    }
+    //}
 
     public class MissingFieldErrorGenerator : AErrorGenerator
     {
 
         public MissingFieldErrorGenerator(IRecordGenerator gen) : base(gen) { }
+
+        public MissingFieldErrorGenerator(IRecordGenerator gen, double rate) : base(gen, rate) { }
 
         protected override JObject ApplyError(JObject record)
         {

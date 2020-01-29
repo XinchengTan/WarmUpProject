@@ -13,10 +13,11 @@ namespace Producer
 
         private readonly IRecordGenerator recordGenerator;
 
-        public Producer(int amount, List<FieldAttributes> fields)
+        public Producer(int amount, List<FieldAttributes> fields, ErrorRateConfig config)
         {
             this.Amount = amount;
-            this.recordGenerator = new RecordGeneratorWithError(fields);
+            this.recordGenerator = Util.ApplyError(new RecordGenerator(fields), config);
+            //this.recordGenerator = new RecordGeneratorWithError(fields);
 
         }
 

@@ -16,6 +16,7 @@ namespace Producer
         private static readonly FieldDataGeneratorFactory generatorFactory = new FieldDataGeneratorFactory();
 
 
+
         private static JObject LoadConfig(string? filePath)
         {
             Console.WriteLine($"Echoing input file path: {filePath}");
@@ -50,12 +51,22 @@ namespace Producer
             {
                 int threads_count = (int)jConfig["threads_count"];
                 int records_count = (int)jConfig["records_count"] < 2147483647 ? (int)jConfig["records_count"] : 2147483647;
-                double error_rate = (double)jConfig["error_rate"];
+
+                // Console.WriteLine((double)jConfig["error_rate"]["missing_field"]);
+
+                ErrorRateConfig errorRate = new ErrorRateConfig
+                {
+                    missingField = (double)jConfig["error_rate"]["missing_field"],
+                    badValue = (double)jConfig["error_rate"]["bad_value"],
+                    additionalField = (double)jConfig["error_rate"]["additional_field"]
+
+                };
+                Console.WriteLine(errorRate.missingField);
 
                 FullConfig fullConfig = new FullConfig(
                     threads_count,
                     records_count,
-                    error_rate,
+                    errorRate,
                     fields
                 );
                 return fullConfig;
@@ -76,17 +87,54 @@ namespace Producer
         }
 
 
-        public static T? GetValueOrNull<T>(Object obj) where T : struct
+        //public static T? GetValueOrNull<T>(Object obj) where T : struct
+        //{
+        //    Console.WriteLine(obj);
+        //    Console.WriteLine(typeof(T));
+
+        //    //try
+        //    //{
+        //    //    return (T) obj;
+        //    //}
+        //    //catch(Exception e)
+        //    //{
+                
+        //    //    Console.WriteLine(e.StackTrace);
+        //    //    return null;
+        //    //}
+
+        //    return (T)obj;
+        //}
+
+        public static IRecordGenerator ApplyError(IRecordGenerator gen, ErrorRateConfig config)
         {
-            try
+            IRecordGenerator gen1 = ApplyErrorHelper(config.badValue, "Bad value", gen);
+            IRecordGenerator gen2 = ApplyErrorHelper(config.missingField, "Missing field", gen1);
+            IRecordGenerator gen3 = ApplyErrorHelper(config.additionalField, "Additional field", gen2);
+            
+            return gen3;
+        }
+
+        private static IRecordGenerator ApplyErrorHelper(double? unprocessedRate, string errorType, IRecordGenerator gen)
+        {
+
+            double rate = unprocessedRate.GetValueOrDefault(0.0);
+            if (rate == 0.0)
             {
-                return (T) obj;
+                return gen;
             }
-            catch
+            switch(errorType)
             {
-                //Console.WriteLine("Type casting error in Config file.");
-                return null;
+                case "Bad value":
+                    return new WrongTypeErrorGenerator(gen, rate);
+                case "Additional field":
+                    return new AdditionalFieldErrorGenerator(gen, rate);
+                case "Missing field":
+                    return new MissingFieldErrorGenerator(gen, rate);
+                default:
+                    return gen;
             }
+
         }
     }
 }

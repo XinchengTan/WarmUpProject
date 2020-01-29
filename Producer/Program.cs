@@ -31,7 +31,7 @@ namespace Producer
                 FullConfig new_parsed_config = ((FullConfig)parsed_config);
 
                 // Initialize producer
-                Producer producer = new Producer(new_parsed_config.records_count, new_parsed_config.fields);
+                Producer producer = new Producer(new_parsed_config.RecordsCount, new_parsed_config.Fields, new_parsed_config.ErrorRate);
 
                 // Initialize adapter
                 // TODO: Decide which consumer to connect with i.e. which adapter to use

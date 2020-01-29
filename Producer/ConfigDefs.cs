@@ -3,6 +3,15 @@ using System.Collections.Generic;
 
 namespace Producer
 {
+
+    public struct ErrorRateConfig
+    {
+        public double? badValue;
+        public double? missingField;
+        public double? additionalField;
+
+    }
+
     // Same as DimentionAttribute
     public struct FieldAttributes
     {
@@ -31,17 +40,17 @@ namespace Producer
 
     public struct FullConfig
     {
-        public int threads_count { get; }
-        public int records_count { get; }
-        public double error_rate { get; }
-        public List<FieldAttributes> fields;
+        public int ThreadsCount { get; }
+        public int RecordsCount { get; }
+        public ErrorRateConfig ErrorRate { get; }
+        public List<FieldAttributes> Fields;
 
-        public FullConfig(int threads, int records, double err_rate, List<FieldAttributes> fields)
+        public FullConfig(int threads, int records, ErrorRateConfig errorRate, List<FieldAttributes> fields)
         {
-            this.threads_count = threads;
-            this.records_count = records;
-            this.error_rate = err_rate;
-            this.fields = fields;
+            this.ThreadsCount = threads;
+            this.RecordsCount = records;
+            this.ErrorRate = errorRate;
+            this.Fields = fields;
         }
     }
 
